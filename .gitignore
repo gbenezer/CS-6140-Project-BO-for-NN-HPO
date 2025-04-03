@@ -175,4 +175,7 @@ cython_debug/
 .pypirc
 
 # ignore log directories in general
-*_logs/
+logs/tb_logs/
+logs/JSON_logs/AxClient_snapshots
+logs/JSON_logs/experiments_snapshots
+logs/csv_logs/trial_logs
