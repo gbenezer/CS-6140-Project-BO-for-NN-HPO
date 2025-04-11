@@ -13,6 +13,7 @@ from ax.plot.contour import interact_contour
 from ax.plot.diagnostic import interact_cross_validation
 from ax.plot.scatter import interact_fitted, plot_objective_vs_constraints
 from ax.modelbridge.cross_validation import cross_validate
+from ax.storage.botorch_modular_registry import ACQUISITION_FUNCTION_REGISTRY, register_acquisition_function
 import plotly.io as pio
 from ax.storage.json_store.save import save_experiment
 from src.network.evaluate_network import evaluate_hyperparameters
@@ -42,7 +43,7 @@ def conduct_experiment(
     fully_random,
     interactive_plots,
     global_early_stop,
-    seed,
+    seed
 ):
 
     # making the experiment CSV directory
@@ -114,6 +115,10 @@ def conduct_experiment(
         gss = None
 
     print("global early stopping strategy:", gss)
+    
+    # add the acquisition function to the acquisition function registry if necessary for saving to JSON format
+    if acquisition_func_class not in ACQUISITION_FUNCTION_REGISTRY.keys():
+        register_acquisition_function(acqf_class=acquisition_func_class)
 
     # create AxClient object, experiment, and add tracking metrics
     ax_client = AxClient(
