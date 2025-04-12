@@ -3,34 +3,11 @@ import torch.nn as nn
 from multiprocessing import freeze_support
 
 # acquisition functions
-from botorch.acquisition.analytic import (
-    ExpectedImprovement,
-    LogExpectedImprovement,
-    LogNoisyExpectedImprovement,
-    NoisyExpectedImprovement,
-    UpperConfidenceBound,
-)
-from botorch.acquisition.monte_carlo import (
-    qExpectedImprovement,
-    qNoisyExpectedImprovement,
-    qUpperConfidenceBound,
-)
 from botorch.acquisition.logei import (
-    qLogExpectedImprovement,
     qLogNoisyExpectedImprovement,
 )
-from botorch.acquisition.max_value_entropy_search import qLowerBoundMaxValueEntropy
-from botorch.acquisition.knowledge_gradient import qKnowledgeGradient
-
-from botorch.acquisition.multi_objective.logei import (
-    qLogNoisyExpectedHypervolumeImprovement,
-)
-from botorch.acquisition.multi_objective.hypervolume_knowledge_gradient import (
-    qHypervolumeKnowledgeGradient,
-)
-from botorch.acquisition.multi_objective.monte_carlo import (
-    qNoisyExpectedHypervolumeImprovement,
-)
+from botorch.acquisition.max_value_entropy_search import qMaxValueEntropy
+from botorch.acquisition.joint_entropy_search import qJointEntropySearch
 
 # adding all the modules and submodules to the path
 import sys
@@ -82,7 +59,6 @@ if __name__ == "__main__":
     )
 
     # Experiment code testing
-    
     # non-random classification, single objective
     MNIST_experiment_df, MNIST_client_object, MNIST_experiment_object = (
         conduct_experiment(
@@ -92,7 +68,7 @@ if __name__ == "__main__":
             param_constraints=exp_def.p_constraints,
             out_constraints=exp_def.o_constraints,
             tracking_metrics=exp_def.classification_tracking_metrics_single,
-            acquisition_func_class=qLogNoisyExpectedImprovement,
+            acquisition_func_class=qJointEntropySearch,
             train_loader=trainloader_MNIST,
             valid_loader=validloader_MNIST,
             test_loader=testloader_MNIST,
@@ -103,14 +79,14 @@ if __name__ == "__main__":
             max_trials=50,
             num_reps_per_trial=1,
             max_epochs=5,
-            experiment_name="qLogNEI_MNIST_3",
+            experiment_name="qJES_MNIST_50_5",
             global_early_stop=False,
             fully_random=False,
             interactive_plots=True,
             seed=None,
         )
     )
-    
+
     # non-random regression, single objective
     Super_experiment_df, Super_client_object, Super_experiment_object = (
         conduct_experiment(
@@ -120,7 +96,7 @@ if __name__ == "__main__":
             param_constraints=exp_def.p_constraints,
             out_constraints=exp_def.o_constraints,
             tracking_metrics=exp_def.regression_tracking_metrics_single,
-            acquisition_func_class=qLogNoisyExpectedImprovement,
+            acquisition_func_class=qJointEntropySearch,
             train_loader=trainloader_Super,
             valid_loader=validloader_Super,
             test_loader=testloader_Super,
@@ -131,7 +107,7 @@ if __name__ == "__main__":
             max_trials=50,
             num_reps_per_trial=1,
             max_epochs=5,
-            experiment_name="qLogNEI_Super_3",
+            experiment_name="qJES_Super_50_5",
             global_early_stop=False,
             fully_random=False,
             interactive_plots=True,
