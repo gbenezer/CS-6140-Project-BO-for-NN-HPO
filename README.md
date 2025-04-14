@@ -2,7 +2,7 @@
 
 This project aims to evaluate Bayesian optimization for tuning neural network hyperparameters and architecture search using different acquisition functions and using environmental variables (like training set size, number of epochs, or function evaluations) as tunable hyperparameters in and of themselves.
 
-The current plan is to use the [PyTorch](https://pytorch.org/) and/or [PyTorch Lightning](https://pytorch.org/) for the implementation of the base neural network generation functionality, [Ax](https://ax.dev/) and [BoTorch](https://botorch.org/) and [GPyTorch](https://gpytorch.ai/) for Bayesian optimization using Gaussian Process-based surrogate models and implemented acquisition functions. If constraints are eventually evaluated, I anticipate creating a manual implementation of the proximal gradient method Alternating Direction Method of Multipliers (unless I can get the implementation in [PyProximal](https://pyproximal.readthedocs.io/en/stable/index.html) to work)
+The current plan is to use [PyTorch Lightning](https://pytorch.org/) for the implementation of the base neural network generation functionality, [Ax](https://ax.dev/) and [BoTorch](https://botorch.org/) for Bayesian optimization using Gaussian Process-based surrogate models and implemented acquisition functions.
 
 ## General Overview of Bayesian Optimization
 
