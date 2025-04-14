@@ -1,4 +1,4 @@
-# Influence of Acquisition Function and Environmental Budget Variables on Bayesian Optimization of Neural Network Hyperparameters
+# Influence of Acquisition Functions on Bayesian Optimization of Neural Network Hyperparameters
 
 This project aims to evaluate Bayesian optimization for tuning neural network hyperparameters and architecture search using different acquisition functions and using environmental variables (like training set size, number of epochs, or function evaluations) as tunable hyperparameters in and of themselves.
 
