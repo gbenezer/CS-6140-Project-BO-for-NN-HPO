@@ -51,9 +51,9 @@ MNIST_benchmark = MNIST_benchmark.assign(
 )
 
 MNIST_accuracy_mean = MNIST_benchmark["test_accuracy"].mean()
-print(MNIST_accuracy_mean)
+# print(MNIST_accuracy_mean)
 MNIST_accuracy_std = MNIST_benchmark["test_accuracy"].std()
-print(MNIST_accuracy_std)
+# print(MNIST_accuracy_std)
 MNIST_upper_error = MNIST_accuracy_mean + 2 * MNIST_accuracy_std
 MNIST_lower_error = MNIST_accuracy_mean - 2 * MNIST_accuracy_std
 
@@ -66,9 +66,9 @@ Super_benchmark = Super_benchmark.assign(
 )
 
 Super_nrmse_range_mean = Super_benchmark["test_nrmse_range"].mean()
-print(Super_nrmse_range_mean)
+# print(Super_nrmse_range_mean)
 Super_nrmse_range_std = Super_benchmark["test_nrmse_range"].std()
-print(Super_nrmse_range_std)
+# print(Super_nrmse_range_std)
 Super_upper_error = Super_nrmse_range_mean + 2 * Super_nrmse_range_std
 Super_lower_error = Super_nrmse_range_mean - 2 * Super_nrmse_range_std
 
@@ -108,14 +108,19 @@ MNIST_data["activation"] = MNIST_data["activation"].replace(
 # so look at networks that did at least 1% better than random
 MNIST_threshold_accuracy = 0.11 # (max(MNIST_data["test_accuracy"]) - 0.1) / 2
 MNIST_above_threshold = MNIST_data[MNIST_data["test_accuracy"] > MNIST_threshold_accuracy]
+print(len(MNIST_data))
+print(len(MNIST_above_threshold))
 
 Super_data["activation"] = Super_data["activation"].replace(
     to_replace=ACTIVATION_FUNCTION_MAPPING
 ).astype(float)
 # getting typical performance of null regressor based on empirical threshold
-Super_null_nrmse = Super_data["test_nrmse_range"][Super_data["test_nrmse_range"] >= 0.44].mean()
-Super_threshold_nrmse = 0.3 # (Super_null_nrmse - min(Super_data["test_nrmse_range"])) / 2
+Super_null_nrmse = Super_data["test_nrmse_range"][Super_data["test_nrmse_range"] >= 0.44].median()
+print(Super_null_nrmse)
+Super_threshold_nrmse = 0.45 # (Super_null_nrmse - min(Super_data["test_nrmse_range"])) / 2
 Super_below_threshold = Super_data[Super_data["test_nrmse_range"] <= Super_threshold_nrmse]
+print(len(Super_data))
+print(len(Super_below_threshold))
 
 # creating interactive parallel coordinate plots
 fig = go.Figure(
@@ -188,7 +193,7 @@ fig = go.Figure(
         ),
     )
 )
-fig.write_image(file=(static_plot_directory / "MNIST_parcoords_above_threshold.pdf"), format="pdf", width=1600, height=900)
+# fig.write_image(file=(static_plot_directory / "MNIST_parcoords_above_threshold.pdf"), format="pdf", width=1600, height=900)
 fig.show()
 
 # Splitting and processing MNIST data by acquisition function
@@ -339,7 +344,7 @@ ax.set_ylim([0, 110])
 ax.set_xlabel("Hyperparameter Evaluation")
 ax.set_ylabel("Test Accuracy (%)")
 plt.legend()
-plt.savefig(str((FIGURE_PATH / "MNIST_Test_Accuracy_Versus_Evaluation.pdf")))
+# plt.savefig(str((FIGURE_PATH / "MNIST_Test_Accuracy_Versus_Evaluation.pdf")))
 plt.show()
 
 # cumulative regret as a function of hyperparameter evaluation
@@ -393,7 +398,7 @@ ax.plot(
 ax.set_xlabel("Hyperparameter Evaluation")
 ax.set_ylabel("Cumulative Regret")
 plt.legend()
-plt.savefig(str((FIGURE_PATH / "MNIST_Cumulative_Regret_Versus_Evaluation.pdf")))
+# plt.savefig(str((FIGURE_PATH / "MNIST_Cumulative_Regret_Versus_Evaluation.pdf")))
 plt.show()
 
 # creating interactive parallel coordinate plot for random search
@@ -467,8 +472,8 @@ fig = go.Figure(
         ),
     )
 )
-fig.write_image(file=(static_plot_directory / "MNIST_parcoords_Random.pdf"), format="pdf", width=1600, height=900)
-fig.show()
+# fig.write_image(file=(static_plot_directory / "MNIST_parcoords_Random.pdf"), format="pdf", width=1600, height=900)
+# fig.show()
 
 # creating interactive parallel coordinate plot for lognei MNIST
 fig = go.Figure(
@@ -541,8 +546,8 @@ fig = go.Figure(
         ),
     )
 )
-fig.write_image(file=(static_plot_directory / "MNIST_parcoords_LogNEI.pdf"), format="pdf", width=1600, height=900)
-fig.show()
+# fig.write_image(file=(static_plot_directory / "MNIST_parcoords_LogNEI.pdf"), format="pdf", width=1600, height=900)
+# fig.show()
 
 # creating interactive parallel coordinate plot for JES MNIST
 fig = go.Figure(
@@ -615,8 +620,8 @@ fig = go.Figure(
         ),
     )
 )
-fig.write_image(file=(static_plot_directory / "MNIST_parcoords_JES.pdf"), format="pdf", width=1600, height=900)
-fig.show()
+# fig.write_image(file=(static_plot_directory / "MNIST_parcoords_JES.pdf"), format="pdf", width=1600, height=900)
+# fig.show()
 
 # Splitting and processing Superconductivity data by acquisition function
 Super_random = Super_data[Super_data["acquisition"] == "Random"].copy()
@@ -767,7 +772,7 @@ fig = go.Figure(
         ),
     )
 )
-fig.write_image(file=(static_plot_directory / "Super_parcoords_below_threshold.pdf"), format="pdf", width=1600, height=900)
+# fig.write_image(file=(static_plot_directory / "Super_parcoords_below_threshold.pdf"), format="pdf", width=1600, height=900)
 fig.show()
 
 
@@ -837,7 +842,7 @@ ax.set_ylim([0, 0.5])
 ax.set_xlabel("Hyperparameter Evaluation")
 ax.set_ylabel("Test NRMSE (Range Normalized)")
 plt.legend()
-plt.savefig(str((FIGURE_PATH / "Super_NRMSE_Versus_Evaluation.pdf")))
+# plt.savefig(str((FIGURE_PATH / "Super_NRMSE_Versus_Evaluation.pdf")))
 plt.show()
 
 # cumulative regret as a function of hyperparameter evaluation
@@ -891,7 +896,7 @@ ax.plot(
 ax.set_xlabel("Hyperparameter Evaluation")
 ax.set_ylabel("Cumulative Regret")
 plt.legend()
-plt.savefig(str((FIGURE_PATH / "Super_Cumulative_Regret_Versus_Evaluation.pdf")))
+# plt.savefig(str((FIGURE_PATH / "Super_Cumulative_Regret_Versus_Evaluation.pdf")))
 plt.show()
 
 # creating interactive parallel coordinate plots for lognei Super
@@ -965,8 +970,8 @@ fig = go.Figure(
         ),
     )
 )
-fig.write_image(file=(static_plot_directory / "Super_parcoords_random.pdf"), format="pdf", width=1600, height=900)
-fig.show()
+# fig.write_image(file=(static_plot_directory / "Super_parcoords_Random.pdf"), format="pdf", width=1600, height=900)
+# fig.show()
 
 # creating interactive parallel coordinate plots for lognei Super
 fig = go.Figure(
@@ -1039,8 +1044,8 @@ fig = go.Figure(
         ),
     )
 )
-fig.write_image(file=(static_plot_directory / "Super_parcoords_lognei.pdf"), format="pdf", width=1600, height=900)
-fig.show()
+# fig.write_image(file=(static_plot_directory / "Super_parcoords_LogNEI.pdf"), format="pdf", width=1600, height=900)
+# fig.show()
 
 # creating interactive parallel coordinate plots for lognei Super
 fig = go.Figure(
@@ -1113,5 +1118,5 @@ fig = go.Figure(
         ),
     )
 )
-fig.write_image(file=(static_plot_directory / "Super_parcoords_jes.pdf"), format="pdf", width=1600, height=900)
-fig.show()
+# fig.write_image(file=(static_plot_directory / "Super_parcoords_JES.pdf"), format="pdf", width=1600, height=900)
+# fig.show()
