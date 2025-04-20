@@ -901,8 +901,8 @@ fig = go.Figure(
             color=Super_random["test_nrmse_range"],
             colorscale=list(reversed(px.colors.sequential.Plasma)),
             showscale=True,
-            cmin=min(Super_random["test_nrmse_range"]),
-            cmax=0.6,
+            cmin=0,
+            cmax=0.5,
         ),
         dimensions=list(
             [
@@ -975,8 +975,8 @@ fig = go.Figure(
             color=Super_lognei["test_nrmse_range"],
             colorscale=list(reversed(px.colors.sequential.Plasma)),
             showscale=True,
-            cmin=min(Super_lognei["test_nrmse_range"]),
-            cmax=0.6,
+            cmin=0,
+            cmax=0.5,
         ),
         dimensions=list(
             [
@@ -1049,8 +1049,8 @@ fig = go.Figure(
             color=Super_jes["test_nrmse_range"],
             colorscale=list(reversed(px.colors.sequential.Plasma)),
             showscale=True,
-            cmin=min(Super_jes["test_nrmse_range"]),
-            cmax=0.6,
+            cmin=0,
+            cmax=0.5,
         ),
         dimensions=list(
             [
