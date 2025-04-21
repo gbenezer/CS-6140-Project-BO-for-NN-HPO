@@ -2,15 +2,17 @@ import os
 import pandas as pd
 from pathlib import Path
 import numpy as np
+import plotly.figure_factory as ff
 import plotly.express as px
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
+import seaborn as sns
 import plotly.io as pio
 import sys
 from ax.service.utils.instantiation import InstantiationBase
 import matplotlib
 
-pd.set_option('future.no_silent_downcasting', True)
+pd.set_option("future.no_silent_downcasting", True)
 matplotlib.rcParams.update(
     {
         "legend.fontsize": 16,
@@ -33,7 +35,12 @@ JES_COLOR = "#117733"
 MARKER_ALPHA = 0.35
 LINE_ALPHA = 0.75
 LINE_WIDTH = 3
-ACTIVATION_FUNCTION_MAPPING = {"swish": 0.0, "sigmoid": 0.5, "relu": 1.0, "leaky_relu": 1.5}
+ACTIVATION_FUNCTION_MAPPING = {
+    "swish": 0.0,
+    "sigmoid": 0.5,
+    "relu": 1.0,
+    "leaky_relu": 1.5,
+}
 
 # defining basal directories
 experiment_directory = Path(os.getcwd()) / "logs" / "csv_logs" / "experiment_logs"
@@ -101,26 +108,68 @@ for experimental_filename in experimental_filename_list:
 
 # mapping activation functions to numeric values
 # then extracting the data of runs that are better than the typical null model
-MNIST_data["activation"] = MNIST_data["activation"].replace(
-    to_replace=ACTIVATION_FUNCTION_MAPPING
-).astype(float)
+MNIST_data["activation"] = (
+    MNIST_data["activation"]
+    .replace(to_replace=ACTIVATION_FUNCTION_MAPPING)
+    .astype(float)
+)
 # average accuracy for a random classifier in the case of 10 classes is 1 in 10
 # so look at networks that did at least 1% better than random
-MNIST_threshold_accuracy = 0.11 # (max(MNIST_data["test_accuracy"]) - 0.1) / 2
-MNIST_above_threshold = MNIST_data[MNIST_data["test_accuracy"] > MNIST_threshold_accuracy]
-print(len(MNIST_data))
-print(len(MNIST_above_threshold))
+MNIST_threshold_accuracy = MNIST_data[
+    "test_accuracy"
+].median()  # (max(MNIST_data["test_accuracy"]) - 0.1) / 2
+MNIST_above_threshold = MNIST_data[
+    MNIST_data["test_accuracy"] > MNIST_threshold_accuracy
+]
+# print(len(MNIST_data))
+# print(MNIST_data["test_accuracy"].median())
+# print(len(MNIST_above_threshold))
+# print(len(MNIST_above_threshold[MNIST_above_threshold["activation"] == 0.5]))
 
-Super_data["activation"] = Super_data["activation"].replace(
-    to_replace=ACTIVATION_FUNCTION_MAPPING
-).astype(float)
+Super_data["activation"] = (
+    Super_data["activation"]
+    .replace(to_replace=ACTIVATION_FUNCTION_MAPPING)
+    .astype(float)
+)
 # getting typical performance of null regressor based on empirical threshold
-Super_null_nrmse = Super_data["test_nrmse_range"][Super_data["test_nrmse_range"] >= 0.44].median()
-print(Super_null_nrmse)
-Super_threshold_nrmse = 0.45 # (Super_null_nrmse - min(Super_data["test_nrmse_range"])) / 2
-Super_below_threshold = Super_data[Super_data["test_nrmse_range"] <= Super_threshold_nrmse]
-print(len(Super_data))
-print(len(Super_below_threshold))
+Super_null_nrmse = Super_data["test_nrmse_range"][
+    Super_data["test_nrmse_range"] >= 0.44
+].median()
+# print(Super_null_nrmse)
+Super_threshold_nrmse = Super_data[
+    "test_nrmse_range"
+].median()  # (Super_null_nrmse - min(Super_data["test_nrmse_range"])) / 2
+Super_below_threshold = Super_data[
+    Super_data["test_nrmse_range"] < Super_threshold_nrmse
+]
+# print(len(Super_data))
+# print(Super_data["test_nrmse_range"].median())
+# print(
+#     len(
+#         Super_data[
+#             (0.45 < Super_data["test_nrmse_range"])
+#             & (Super_data["test_nrmse_range"] < 0.5)
+#         ]
+#     )
+# )
+# print(len(Super_below_threshold))
+
+distribution_figure = px.violin(
+    data_frame=MNIST_data, y="test_accuracy", points="all"
+)
+distribution_figure.show()
+distribution_figure = px.violin(
+    data_frame=Super_data, y="test_nrmse_range", points="all"
+)
+distribution_figure.show()
+distribution_figure = px.violin(
+    data_frame=MNIST_data, x="acquisition", y="test_accuracy", points="all"
+)
+distribution_figure.show()
+distribution_figure = px.violin(
+    data_frame=Super_data, x="acquisition", y="test_nrmse_range", points="all"
+)
+distribution_figure.show()
 
 # creating interactive parallel coordinate plots
 fig = go.Figure(
@@ -187,13 +236,20 @@ fig = go.Figure(
                     values=MNIST_above_threshold["beta2"],
                 ),
                 dict(
-                    range=[0.0, 1.0], label="Weight Decay", values=MNIST_above_threshold["w_decay"]
+                    range=[0.0, 1.0],
+                    label="Weight Decay",
+                    values=MNIST_above_threshold["w_decay"],
                 ),
             ]
         ),
     )
 )
-# fig.write_image(file=(static_plot_directory / "MNIST_parcoords_above_threshold.pdf"), format="pdf", width=1600, height=900)
+# fig.write_image(
+#     file=(static_plot_directory / "MNIST_parcoords_above_threshold.pdf"),
+#     format="pdf",
+#     width=1600,
+#     height=900,
+# )
 fig.show()
 
 # Splitting and processing MNIST data by acquisition function
@@ -201,13 +257,42 @@ MNIST_random = MNIST_data[MNIST_data["acquisition"] == "Random"].copy()
 MNIST_lognei = MNIST_data[MNIST_data["acquisition"] == "LogNEI"].copy()
 MNIST_jes = MNIST_data[MNIST_data["acquisition"] == "JES"].copy()
 
+
+print("Median number parameters, MNIST:", MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean]["number_parameters"].median())
+print("Median number parameters relative to hand-tuned, MNIST:", MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean]["number_parameters"].median() / 447500.0)
+
+print("Median number parameters, LogNEI, MNIST:", MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean]["number_parameters"].median())
+print("Median number parameters relative to hand-tuned, LogNEI, MNIST:", MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean]["number_parameters"].median() / 447500.0)
+
+print("Median checkpoint size, bytes, MNIST:", MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean]["checkpoint_size"].median())
+print("Median checkpoint size relative to hand-tuned, MNIST:", MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean]["checkpoint_size"].median() / 5389811.0)
+
+print("Median checkpoint size, bytes, LogNEI, MNIST:", MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean]["checkpoint_size"].median())
+print("Median checkpoint size relative to hand-tuned, LogNEI, MNIST:", MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean]["checkpoint_size"].median() / 5389811.0)
+
 # Calculating cumulative regret for each replicate
-MNIST_random["immediate_regret"] = abs(MNIST_random["test_accuracy"] - MNIST_accuracy_mean)
-MNIST_random["cumulative_regret"] = MNIST_random[["replicate", "immediate_regret"]].groupby(["replicate"], as_index=False).cumsum()
-MNIST_lognei["immediate_regret"] = abs(MNIST_lognei["test_accuracy"] - MNIST_accuracy_mean)
-MNIST_lognei["cumulative_regret"] = MNIST_lognei[["replicate", "immediate_regret"]].groupby(["replicate"], as_index=False).cumsum()
+MNIST_random["immediate_regret"] = abs(
+    MNIST_random["test_accuracy"] - MNIST_accuracy_mean
+)
+MNIST_random["cumulative_regret"] = (
+    MNIST_random[["replicate", "immediate_regret"]]
+    .groupby(["replicate"], as_index=False)
+    .cumsum()
+)
+MNIST_lognei["immediate_regret"] = abs(
+    MNIST_lognei["test_accuracy"] - MNIST_accuracy_mean
+)
+MNIST_lognei["cumulative_regret"] = (
+    MNIST_lognei[["replicate", "immediate_regret"]]
+    .groupby(["replicate"], as_index=False)
+    .cumsum()
+)
 MNIST_jes["immediate_regret"] = abs(MNIST_jes["test_accuracy"] - MNIST_accuracy_mean)
-MNIST_jes["cumulative_regret"] = MNIST_jes[["replicate", "immediate_regret"]].groupby(["replicate"], as_index=False).cumsum()
+MNIST_jes["cumulative_regret"] = (
+    MNIST_jes[["replicate", "immediate_regret"]]
+    .groupby(["replicate"], as_index=False)
+    .cumsum()
+)
 
 # getting cumulative median accuracies and regrets
 MNIST_random_median = (
@@ -282,13 +367,13 @@ MNIST_jes_median_cummax["log_cumulative_regret"] = MNIST_jes_median_cummax[
 fig, ax = plt.subplots(figsize=FIG_SIZE, dpi=DPI)
 ax.scatter(
     x=MNIST_random["trial_index"],
-    y=100*MNIST_random["test_accuracy"],
+    y=100 * MNIST_random["test_accuracy"],
     color=RANDOM_COLOR,
     alpha=MARKER_ALPHA,
 )
 ax.plot(
     MNIST_random_median_cummax["trial_index"],
-    100*MNIST_random_median_cummax["test_accuracy"],
+    100 * MNIST_random_median_cummax["test_accuracy"],
     "-",
     color=RANDOM_COLOR,
     label="Random",
@@ -297,13 +382,13 @@ ax.plot(
 )
 ax.scatter(
     x=MNIST_lognei["trial_index"],
-    y=100*MNIST_lognei["test_accuracy"],
+    y=100 * MNIST_lognei["test_accuracy"],
     color=LOGNEI_COLOR,
     alpha=MARKER_ALPHA,
 )
 ax.plot(
     MNIST_lognei_median_cummax["trial_index"],
-    100*MNIST_lognei_median_cummax["test_accuracy"],
+    100 * MNIST_lognei_median_cummax["test_accuracy"],
     "-",
     color=LOGNEI_COLOR,
     label="LogNEI",
@@ -312,13 +397,13 @@ ax.plot(
 )
 ax.scatter(
     x=MNIST_jes["trial_index"],
-    y=100*MNIST_jes["test_accuracy"],
+    y=100 * MNIST_jes["test_accuracy"],
     color=JES_COLOR,
     alpha=MARKER_ALPHA,
 )
 ax.plot(
     MNIST_jes_median_cummax["trial_index"],
-    100*MNIST_jes_median_cummax["test_accuracy"],
+    100 * MNIST_jes_median_cummax["test_accuracy"],
     "-",
     color=JES_COLOR,
     label="JES",
@@ -326,7 +411,7 @@ ax.plot(
     alpha=LINE_ALPHA,
 )
 ax.hlines(
-    y=100*MNIST_accuracy_mean,
+    y=100 * MNIST_accuracy_mean,
     xmin=0,
     xmax=50,
     colors=BENCHMARK_COLOR,
@@ -334,7 +419,7 @@ ax.hlines(
     label="Benchmark",
 )
 ax.hlines(
-    y=[100*MNIST_lower_error, 100*MNIST_upper_error],
+    y=[100 * MNIST_lower_error, 100 * MNIST_upper_error],
     xmin=0,
     xmax=50,
     colors=BENCHMARK_COLOR,
@@ -466,7 +551,9 @@ fig = go.Figure(
                     values=MNIST_random["beta2"],
                 ),
                 dict(
-                    range=[0.0, 1.0], label="Weight Decay", values=MNIST_random["w_decay"]
+                    range=[0.0, 1.0],
+                    label="Weight Decay",
+                    values=MNIST_random["w_decay"],
                 ),
             ]
         ),
@@ -540,7 +627,9 @@ fig = go.Figure(
                     values=MNIST_lognei["beta2"],
                 ),
                 dict(
-                    range=[0.0, 1.0], label="Weight Decay", values=MNIST_lognei["w_decay"]
+                    range=[0.0, 1.0],
+                    label="Weight Decay",
+                    values=MNIST_lognei["w_decay"],
                 ),
             ]
         ),
@@ -628,13 +717,43 @@ Super_random = Super_data[Super_data["acquisition"] == "Random"].copy()
 Super_lognei = Super_data[Super_data["acquisition"] == "LogNEI"].copy()
 Super_jes = Super_data[Super_data["acquisition"] == "JES"].copy()
 
+print("Median number parameters, Super:", Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean]["number_parameters"].median())
+print("Median number parameters relative to hand-tuned, Super:", Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean]["number_parameters"].median() / 41580.0)
+
+print("Median number parameters, LogNEI, Super:", Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean]["number_parameters"].median())
+print("Median number parameters relative to hand-tuned, LogNEI, Super:", Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean]["number_parameters"].median() / 41580.0)
+
+print("Median checkpoint size, bytes, Super:", Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean]["checkpoint_size"].median())
+print("Median checkpoint size relative to hand-tuned, Super:", Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean]["checkpoint_size"].median() / 514995.0)
+
+print("Median checkpoint size, bytes, LogNEI, Super:", Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean]["checkpoint_size"].median())
+print("Median checkpoint size relative to hand-tuned, LogNEI, Super:", Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean]["checkpoint_size"].median() / 514995.0)
+
 # calculating cumulative regret for every replicate
-Super_random["immediate_regret"] = abs(Super_random["test_nrmse_range"] - Super_nrmse_range_mean)
-Super_random["cumulative_regret"] = Super_random[["replicate", "immediate_regret"]].groupby(["replicate"], as_index=False).cumsum()
-Super_lognei["immediate_regret"] = abs(Super_lognei["test_nrmse_range"] - Super_nrmse_range_mean)
-Super_lognei["cumulative_regret"] = Super_lognei[["replicate", "immediate_regret"]].groupby(["replicate"], as_index=False).cumsum()
-Super_jes["immediate_regret"] = abs(Super_jes["test_nrmse_range"] - Super_nrmse_range_mean)
-Super_jes["cumulative_regret"] = Super_jes[["replicate", "immediate_regret"]].groupby(["replicate"], as_index=False).cumsum()
+Super_random["immediate_regret"] = abs(
+    Super_random["test_nrmse_range"] - Super_nrmse_range_mean
+)
+Super_random["cumulative_regret"] = (
+    Super_random[["replicate", "immediate_regret"]]
+    .groupby(["replicate"], as_index=False)
+    .cumsum()
+)
+Super_lognei["immediate_regret"] = abs(
+    Super_lognei["test_nrmse_range"] - Super_nrmse_range_mean
+)
+Super_lognei["cumulative_regret"] = (
+    Super_lognei[["replicate", "immediate_regret"]]
+    .groupby(["replicate"], as_index=False)
+    .cumsum()
+)
+Super_jes["immediate_regret"] = abs(
+    Super_jes["test_nrmse_range"] - Super_nrmse_range_mean
+)
+Super_jes["cumulative_regret"] = (
+    Super_jes[["replicate", "immediate_regret"]]
+    .groupby(["replicate"], as_index=False)
+    .cumsum()
+)
 
 # getting cumulative minimum test nrmse (range normalized) and cumulative regrets
 Super_random_median = (
@@ -766,13 +885,20 @@ fig = go.Figure(
                     values=Super_below_threshold["beta2"],
                 ),
                 dict(
-                    range=[0.0, 1.0], label="Weight Decay", values=Super_below_threshold["w_decay"]
+                    range=[0.0, 1.0],
+                    label="Weight Decay",
+                    values=Super_below_threshold["w_decay"],
                 ),
             ]
         ),
     )
 )
-# fig.write_image(file=(static_plot_directory / "Super_parcoords_below_threshold.pdf"), format="pdf", width=1600, height=900)
+# fig.write_image(
+#     file=(static_plot_directory / "Super_parcoords_below_threshold.pdf"),
+#     format="pdf",
+#     width=1600,
+#     height=900,
+# )
 fig.show()
 
 
@@ -899,7 +1025,7 @@ plt.legend()
 # plt.savefig(str((FIGURE_PATH / "Super_Cumulative_Regret_Versus_Evaluation.pdf")))
 plt.show()
 
-# creating interactive parallel coordinate plots for lognei Super
+# creating interactive parallel coordinate plots for random Super
 fig = go.Figure(
     data=go.Parcoords(
         line=dict(
@@ -964,7 +1090,9 @@ fig = go.Figure(
                     values=Super_random["beta2"],
                 ),
                 dict(
-                    range=[0.0, 1.0], label="Weight Decay", values=Super_random["w_decay"]
+                    range=[0.0, 1.0],
+                    label="Weight Decay",
+                    values=Super_random["w_decay"],
                 ),
             ]
         ),
@@ -1038,7 +1166,9 @@ fig = go.Figure(
                     values=Super_lognei["beta2"],
                 ),
                 dict(
-                    range=[0.0, 1.0], label="Weight Decay", values=Super_lognei["w_decay"]
+                    range=[0.0, 1.0],
+                    label="Weight Decay",
+                    values=Super_lognei["w_decay"],
                 ),
             ]
         ),
@@ -1047,7 +1177,7 @@ fig = go.Figure(
 # fig.write_image(file=(static_plot_directory / "Super_parcoords_LogNEI.pdf"), format="pdf", width=1600, height=900)
 # fig.show()
 
-# creating interactive parallel coordinate plots for lognei Super
+# creating interactive parallel coordinate plots for jes Super
 fig = go.Figure(
     data=go.Parcoords(
         line=dict(
