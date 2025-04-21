@@ -19,7 +19,7 @@ The general workflow for Bayesian optimization in the context of neural network 
 ### A visual example of steps 5 to 7 (from *A Tutorial on Bayesian Optimization of Expensive Cost Functions, with Application to Active User Modeling and Hierarchical Reinforcement Learning*)
 <img src="Bayesian_optimization_tutorial_example.png" alt="Image from Bayesian Optimization Tutorial" width=600, height=600, class="center">
 
-## Components
+## Repository Structure
 
 - Loading the data for both the digit classification and critical temperature prediction tasks is carried out by the `get_MNIST_data` and `get_Superconductivity_data` functions from [src/network/load_data.py](src/network/load_data.py).
 
