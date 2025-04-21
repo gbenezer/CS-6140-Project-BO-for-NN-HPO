@@ -202,22 +202,22 @@ Superconductivity_parameters = [
 ]
 
 # definition and bounds for budget variables just in case
-budget_variables = [
-    {
-        "name": "max_epochs",
-        "type": "range",
-        "bounds": [1, 100],
-        "value_type": "int",
-        "log_scale": False,
-    },
-    {
-        "name": "fraction_train_data",
-        "type": "range",
-        "bounds": [0.1, 1.0],
-        "value_type": "float",
-        "log_scale": False,
-    },
-]
+# budget_variables = [
+#     {
+#         "name": "max_epochs",
+#         "type": "range",
+#         "bounds": [1, 100],
+#         "value_type": "int",
+#         "log_scale": False,
+#     },
+#     {
+#         "name": "fraction_train_data",
+#         "type": "range",
+#         "bounds": [0.1, 1.0],
+#         "value_type": "float",
+#         "log_scale": False,
+#     },
+# ]
 
 # Single objective and multiobjective definitions
 MNIST_single_objective = {"test_accuracy": ObjectiveProperties(minimize=False)}
@@ -284,9 +284,3 @@ classification_tracking_metrics_single = (
 regression_tracking_metrics_single = (
     general_tracking_metrics + regression_metrics + single_objective_added_metrics
 )
-
-# # Creating SearchSpace objects from the parameter lists
-# MNIST_SearchSpace = InstantiationBase().make_search_space(parameters=MNIST_parameters,
-#                                                           parameter_constraints=p_constraints)
-# Superconductivity_SearchSpace = InstantiationBase().make_search_space(parameters=Superconductivity_parameters,
-#                                                           parameter_constraints=p_constraints)

@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import torch
 from typing import Literal
 import pandas as pd
 import numpy as np
@@ -13,8 +14,12 @@ from ax.plot.contour import interact_contour
 from ax.plot.diagnostic import interact_cross_validation
 from ax.plot.scatter import interact_fitted, plot_objective_vs_constraints
 from ax.modelbridge.cross_validation import cross_validate
-from ax.storage.botorch_modular_registry import ACQUISITION_FUNCTION_REGISTRY, register_acquisition_function
+from ax.storage.botorch_modular_registry import (
+    ACQUISITION_FUNCTION_REGISTRY,
+    register_acquisition_function,
+)
 import plotly.io as pio
+from botorch.acquisition import AcquisitionFunction
 from ax.storage.json_store.save import save_experiment
 from src.network.evaluate_network import evaluate_hyperparameters
 from src.Ax_BO.threshold_global_stopping import ThresholdGlobalStoppingStrategy
@@ -23,29 +28,57 @@ from src.Ax_BO.threshold_global_stopping import ThresholdGlobalStoppingStrategy
 # TODO: add function docstring
 def conduct_experiment(
     task: Literal["regression", "classification"],
-    parameter_space,
+    parameter_space: dict,
     objective: dict,
-    param_constraints,
-    out_constraints,
-    tracking_metrics,
-    acquisition_func_class,
-    train_loader,
-    valid_loader,
-    test_loader,
-    input_shape,
-    number_input_features,
-    number_output_features,
-    loss,
-    max_trials,
-    num_reps_per_trial,
-    max_epochs,
-    experiment_name,
-    fully_random,
-    interactive_plots,
-    global_early_stop,
-    seed
+    param_constraints: list | None,
+    out_constraints: list | None,
+    tracking_metrics: list | None,
+    acquisition_func_class: AcquisitionFunction,
+    train_loader: torch.utils.data.DataLoader,
+    valid_loader: torch.utils.data.DataLoader,
+    test_loader: torch.utils.data.DataLoader,
+    input_shape: tuple,
+    number_input_features: int,
+    number_output_features: int,
+    loss: torch.nn.modules.loss._Loss,
+    max_trials: int,
+    num_reps_per_trial: int,
+    max_epochs: int,
+    experiment_name: str,
+    fully_random: bool,
+    interactive_plots: bool,
+    global_early_stop: bool,
+    seed: int | None = None,
 ):
+    """_summary_
 
+    Args:
+        task (Literal[&quot;regression&quot;, &quot;classification&quot;]): _description_
+        parameter_space (dict): _description_
+        objective (dict): _description_
+        param_constraints (list | None): _description_
+        out_constraints (list | None): _description_
+        tracking_metrics (list | None): _description_
+        acquisition_func_class (AcquisitionFunction): _description_
+        train_loader (torch.utils.data.DataLoader): _description_
+        valid_loader (torch.utils.data.DataLoader): _description_
+        test_loader (torch.utils.data.DataLoader): _description_
+        input_shape (tuple): _description_
+        number_input_features (int): _description_
+        number_output_features (int): _description_
+        loss (torch.nn.modules.loss._Loss): _description_
+        max_trials (int): _description_
+        num_reps_per_trial (int): _description_
+        max_epochs (int): _description_
+        experiment_name (str): _description_
+        fully_random (bool): _description_
+        interactive_plots (bool): _description_
+        global_early_stop (bool): _description_
+        seed (int | None, optional): _description_. Defaults to None.
+
+    Returns:
+        _type_: _description_
+    """
     # making the experiment CSV directory
     experiment_df_dir = Path(os.getcwd()) / "logs" / "csv_logs" / "experiment_logs"
     JSON_dir = Path(os.getcwd()) / "logs" / "JSON_logs"
@@ -115,7 +148,7 @@ def conduct_experiment(
         gss = None
 
     print("global early stopping strategy:", gss)
-    
+
     # add the acquisition function to the acquisition function registry if necessary for saving to JSON format
     if acquisition_func_class not in ACQUISITION_FUNCTION_REGISTRY.keys():
         register_acquisition_function(acqf_class=acquisition_func_class)
@@ -274,7 +307,7 @@ def conduct_experiment(
     experiment_csv_name = experiment_name + "_official.csv"
     experiment_df.to_csv(path_or_buf=experiment_df_dir / experiment_csv_name)
     client_object.save_to_json_file(
-            filepath=str(finished_JSON_dir / f"{experiment_name}_ax_client.json")
+        filepath=str(finished_JSON_dir / f"{experiment_name}_ax_client.json")
     )
     save_experiment(
         experiment=experiment_object,

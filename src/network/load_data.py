@@ -17,7 +17,18 @@ def get_MNIST_data(
     batch_n: int,
     download_data: bool,
 ):
+    """_summary_
 
+    Args:
+        valid_fraction (float): _description_
+        random_seed (int): _description_
+        n_workers (int): _description_
+        batch_n (int): _description_
+        download_data (bool): _description_
+
+    Returns:
+        _type_: _description_
+    """
     # define the image transformation
     image_transform = transforms.Compose(
         [
@@ -79,6 +90,11 @@ def get_MNIST_data(
 
 # define Dataset class for Superconductivity data
 class SuperconductivityDataset(data.Dataset):
+    """_summary_
+
+    Args:
+        data (_type_): _description_
+    """
     def __init__(
         self,
         transform=transforms.Compose(
@@ -126,6 +142,11 @@ class SuperconductivityDataset(data.Dataset):
 
 
 class LocalSuperconductivityDataset(data.Dataset):
+    """_summary_
+
+    Args:
+        data (_type_): _description_
+    """
     def __init__(
         self,
         transform=transforms.Compose(
@@ -184,7 +205,19 @@ def get_Superconductivity_data(
     batch_n: int,
     local=False,
 ):
+    """_summary_
 
+    Args:
+        valid_fraction (float): _description_
+        test_fraction (float): _description_
+        random_seed (int): _description_
+        n_workers (int): _description_
+        batch_n (int): _description_
+        local (bool, optional): _description_. Defaults to False.
+
+    Returns:
+        _type_: _description_
+    """
     # instantiating the full dataset
     if local:
         full_dataset = LocalSuperconductivityDataset()

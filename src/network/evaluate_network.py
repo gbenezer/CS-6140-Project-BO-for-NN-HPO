@@ -13,6 +13,7 @@ import os
 import pandas as pd
 import numpy as np
 import lightning as L
+import torch
 from typing import Literal
 from lightning.pytorch import loggers as pl_loggers
 from lightning.pytorch.profilers import SimpleProfiler
@@ -27,19 +28,37 @@ from src.network.create_network_lightning import create_ff_model
 
 def evaluate_hyperparameters(
     task: Literal["regression", "classification"],
-    train_loader,
-    valid_loader,
-    test_loader,
-    input_shape,
-    number_input_features,
-    number_output_features,
-    loss,
-    log_dir_name,
-    num_rep,
-    max_epochs,
-    parameterization,
+    train_loader: torch.utils.data.DataLoader,
+    valid_loader: torch.utils.data.DataLoader,
+    test_loader: torch.utils.data.DataLoader,
+    input_shape: tuple,
+    number_input_features: int,
+    number_output_features: int,
+    loss: torch.nn.modules.loss._Loss,
+    log_dir_name: str,
+    num_rep: int,
+    max_epochs: int,
+    parameterization: dict,
 ):
+    """_summary_
 
+    Args:
+        task (Literal["regression", "classification"]): _description_
+        train_loader (torch.utils.data.DataLoader): _description_
+        valid_loader (torch.utils.data.DataLoader): _description_
+        test_loader (torch.utils.data.DataLoader): _description_
+        input_shape (tuple): _description_
+        number_input_features (int): _description_
+        number_output_features (int): _description_
+        loss (torch.nn.modules.loss._Loss): _description_
+        log_dir_name (str): _description_
+        num_rep (int): _description_
+        max_epochs (int): _description_
+        parameterization (dict): _description_
+
+    Returns:
+        _type_: _description_
+    """
     # define some lists to keep track of outputs
     training_times = []
     validation_times = []

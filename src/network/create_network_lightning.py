@@ -38,7 +38,29 @@ def create_ff_model(
     beta2: float,
     w_decay: float,
 ) -> L.LightningModule:
+    """_summary_
 
+    Args:
+        task (Literal["regression", "classification"]): _description_
+        input_shape (tuple): _description_
+        number_input_features (int): _description_
+        number_output_features (int): _description_
+        input_dropout_probability (float): _description_
+        hidden_dropout_probability (float): _description_
+        output_dropout_probability (float): _description_
+        hidden_layer_nodes_1 (int): _description_
+        hidden_layer_nodes_2 (int): _description_
+        hidden_layer_nodes_3 (int): _description_
+        activation (Literal["swish", "sigmoid", "relu", "leaky_relu"] | nn.Module): _description_
+        loss (nn.modules.loss._Loss): _description_
+        learning_rate (float): _description_
+        beta1 (float): _description_
+        beta2 (float): _description_
+        w_decay (float): _description_
+
+    Returns:
+        L.LightningModule: _description_
+    """
     # allow for interoperation with Ax parameterization
     if activation == "sigmoid":
         activation = nn.Sigmoid()
@@ -224,7 +246,27 @@ def create_ff_model_varied_layers(
     beta2: float,
     w_decay: float,
 ):
+    """_summary_
 
+    Args:
+        task (Literal["regression", "classification"]): _description_
+        input_shape (tuple): _description_
+        number_input_features (int): _description_
+        number_output_features (int): _description_
+        input_dropout_probability (float): _description_
+        hidden_dropout_probability (float): _description_
+        output_dropout_probability (float): _description_
+        hidden_layer_nodes (tuple): _description_
+        activations (list): _description_
+        loss (nn.modules.loss._Loss): _description_
+        learning_rate (float): _description_
+        beta1 (float): _description_
+        beta2 (float): _description_
+        w_decay (float): _description_
+
+    Returns:
+        _type_: _description_
+    """
     # TODO: more explicitly restrict activations variable
     # TODO: explicitly check on number of activations versus number of layers
 
