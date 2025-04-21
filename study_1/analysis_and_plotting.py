@@ -155,31 +155,75 @@ Super_below_threshold = Super_data[
 # print(len(Super_below_threshold))
 
 distribution_figure = px.violin(
-    data_frame=MNIST_data, y="test_accuracy", points="all"
+    data_frame=MNIST_data,
+    y="test_accuracy",
+    points="all",
+    title="Distribution of Feedforward Neural Network Test Accuracies on MNIST",
+    labels={"test_accuracy": "Test Accuracy (Fraction)"},
 )
+# distribution_figure.write_html(
+#     file=(INTERACTIVE_PATH / "violin_plots" / "MNIST_Test_Accuracy_Distribution.html")
+# )
 distribution_figure.show()
 distribution_figure = px.violin(
-    data_frame=Super_data, y="test_nrmse_range", points="all"
+    data_frame=Super_data,
+    y="test_nrmse_range",
+    points="all",
+    title="Distribution of Feedforward Neural Network Test Normalized RMSE Values on Superconductivity Data",
+    labels={"test_nrmse_range": "Test Normalized RMSE (Relative to Response)"},
 )
+# distribution_figure.write_html(
+#     file=(INTERACTIVE_PATH / "violin_plots" / "Super_Test_NRMSE_Distribution.html")
+# )
 distribution_figure.show()
 distribution_figure = px.violin(
-    data_frame=MNIST_data, x="acquisition", y="test_accuracy", points="all"
+    data_frame=MNIST_data,
+    x="acquisition",
+    y="test_accuracy",
+    points="all",
+    title="Distribution of Feedforward Neural Network Test Accuracies on MNIST versus Acquisition Function",
+    labels={
+        "test_accuracy": "Test Accuracy (Fraction)",
+        "acquisition": "Acquisition Function",
+    },
 )
+# distribution_figure.write_html(
+#     file=(
+#         INTERACTIVE_PATH
+#         / "violin_plots"
+#         / "MNIST_Test_Accuracy_Distribution_by_Acquisition.html"
+#     )
+# )
 distribution_figure.show()
 distribution_figure = px.violin(
-    data_frame=Super_data, x="acquisition", y="test_nrmse_range", points="all"
+    data_frame=Super_data,
+    x="acquisition",
+    y="test_nrmse_range",
+    points="all",
+    title="Distribution of Feedforward Neural Network Test Normalized RMSE Values on Superconductivity Data versus Acquisition Function",
+    labels={
+        "acquisition": "Acquisition Function",
+        "test_nrmse_range": "Test Normalized RMSE (Relative to Response)",
+    },
 )
+# distribution_figure.write_html(
+#     file=(
+#         INTERACTIVE_PATH
+#         / "violin_plots"
+#         / "Super_Test_NRMSE_Distribution_by_Acquisition.html"
+#     )
+# )
 distribution_figure.show()
 
 # creating interactive parallel coordinate plots
 fig = go.Figure(
     data=go.Parcoords(
         line=dict(
-            color=MNIST_above_threshold["test_accuracy"],
+            color=100 * MNIST_above_threshold["test_accuracy"],
             colorscale="plasma",
             showscale=True,
             cmin=0,
-            cmax=1.0,
+            cmax=100,
         ),
         dimensions=list(
             [
@@ -244,6 +288,12 @@ fig = go.Figure(
         ),
     )
 )
+fig.update_layout(
+    title=dict(
+        text="MNIST Test Accuracy Parallel Coordinate Plot, Hyperparameters Above Median, Colored by Test Accuracy"
+    )
+)
+# fig.write_html(file=(plot_directory / "parallel_coordinate_plots" / "MNIST_parcoords_above_median.html"))
 # fig.write_image(
 #     file=(static_plot_directory / "MNIST_parcoords_above_threshold.pdf"),
 #     format="pdf",
@@ -258,17 +308,61 @@ MNIST_lognei = MNIST_data[MNIST_data["acquisition"] == "LogNEI"].copy()
 MNIST_jes = MNIST_data[MNIST_data["acquisition"] == "JES"].copy()
 
 
-print("Median number parameters, MNIST:", MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean]["number_parameters"].median())
-print("Median number parameters relative to hand-tuned, MNIST:", MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean]["number_parameters"].median() / 447500.0)
+print(
+    "Median number parameters, MNIST:",
+    MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean][
+        "number_parameters"
+    ].median(),
+)
+print(
+    "Median number parameters relative to hand-tuned, MNIST:",
+    MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean][
+        "number_parameters"
+    ].median()
+    / 447500.0,
+)
 
-print("Median number parameters, LogNEI, MNIST:", MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean]["number_parameters"].median())
-print("Median number parameters relative to hand-tuned, LogNEI, MNIST:", MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean]["number_parameters"].median() / 447500.0)
+print(
+    "Median number parameters, LogNEI, MNIST:",
+    MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean][
+        "number_parameters"
+    ].median(),
+)
+print(
+    "Median number parameters relative to hand-tuned, LogNEI, MNIST:",
+    MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean][
+        "number_parameters"
+    ].median()
+    / 447500.0,
+)
 
-print("Median checkpoint size, bytes, MNIST:", MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean]["checkpoint_size"].median())
-print("Median checkpoint size relative to hand-tuned, MNIST:", MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean]["checkpoint_size"].median() / 5389811.0)
+print(
+    "Median checkpoint size, bytes, MNIST:",
+    MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean][
+        "checkpoint_size"
+    ].median(),
+)
+print(
+    "Median checkpoint size relative to hand-tuned, MNIST:",
+    MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean][
+        "checkpoint_size"
+    ].median()
+    / 5389811.0,
+)
 
-print("Median checkpoint size, bytes, LogNEI, MNIST:", MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean]["checkpoint_size"].median())
-print("Median checkpoint size relative to hand-tuned, LogNEI, MNIST:", MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean]["checkpoint_size"].median() / 5389811.0)
+print(
+    "Median checkpoint size, bytes, LogNEI, MNIST:",
+    MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean][
+        "checkpoint_size"
+    ].median(),
+)
+print(
+    "Median checkpoint size relative to hand-tuned, LogNEI, MNIST:",
+    MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean][
+        "checkpoint_size"
+    ].median()
+    / 5389811.0,
+)
 
 # Calculating cumulative regret for each replicate
 MNIST_random["immediate_regret"] = abs(
@@ -490,11 +584,11 @@ plt.show()
 fig = go.Figure(
     data=go.Parcoords(
         line=dict(
-            color=MNIST_random["test_accuracy"],
+            color=100 * MNIST_random["test_accuracy"],
             colorscale="plasma",
             showscale=True,
             cmin=0,
-            cmax=1.0,
+            cmax=100,
         ),
         dimensions=list(
             [
@@ -559,18 +653,24 @@ fig = go.Figure(
         ),
     )
 )
+fig.update_layout(
+    title=dict(
+        text="MNIST Test Accuracy Parallel Coordinate Plot, Random Search, Colored by Test Accuracy"
+    )
+)
+# fig.write_html(file=(plot_directory / "parallel_coordinate_plots" / "MNIST_parcoords_Random.html"))
 # fig.write_image(file=(static_plot_directory / "MNIST_parcoords_Random.pdf"), format="pdf", width=1600, height=900)
-# fig.show()
+fig.show()
 
 # creating interactive parallel coordinate plot for lognei MNIST
 fig = go.Figure(
     data=go.Parcoords(
         line=dict(
-            color=MNIST_lognei["test_accuracy"],
+            color=100 * MNIST_lognei["test_accuracy"],
             colorscale="plasma",
             showscale=True,
             cmin=0,
-            cmax=1.0,
+            cmax=100,
         ),
         dimensions=list(
             [
@@ -635,18 +735,24 @@ fig = go.Figure(
         ),
     )
 )
+fig.update_layout(
+    title=dict(
+        text="MNIST Test Accuracy Parallel Coordinate Plot, LogNEI, Colored by Test Accuracy"
+    )
+)
+# fig.write_html(file=(plot_directory / "parallel_coordinate_plots" / "MNIST_parcoords_LogNEI.html"))
 # fig.write_image(file=(static_plot_directory / "MNIST_parcoords_LogNEI.pdf"), format="pdf", width=1600, height=900)
-# fig.show()
+fig.show()
 
 # creating interactive parallel coordinate plot for JES MNIST
 fig = go.Figure(
     data=go.Parcoords(
         line=dict(
-            color=MNIST_jes["test_accuracy"],
+            color=100 * MNIST_jes["test_accuracy"],
             colorscale="plasma",
             showscale=True,
             cmin=0,
-            cmax=1.0,
+            cmax=100,
         ),
         dimensions=list(
             [
@@ -709,25 +815,75 @@ fig = go.Figure(
         ),
     )
 )
+fig.update_layout(
+    title=dict(
+        text="MNIST Test Accuracy Parallel Coordinate Plot, JES, Colored by Test Accuracy"
+    )
+)
+# fig.write_html(file=(plot_directory / "parallel_coordinate_plots" / "MNIST_parcoords_JES.html"))
 # fig.write_image(file=(static_plot_directory / "MNIST_parcoords_JES.pdf"), format="pdf", width=1600, height=900)
-# fig.show()
+fig.show()
 
 # Splitting and processing Superconductivity data by acquisition function
 Super_random = Super_data[Super_data["acquisition"] == "Random"].copy()
 Super_lognei = Super_data[Super_data["acquisition"] == "LogNEI"].copy()
 Super_jes = Super_data[Super_data["acquisition"] == "JES"].copy()
 
-print("Median number parameters, Super:", Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean]["number_parameters"].median())
-print("Median number parameters relative to hand-tuned, Super:", Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean]["number_parameters"].median() / 41580.0)
+print(
+    "Median number parameters, Super:",
+    Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean][
+        "number_parameters"
+    ].median(),
+)
+print(
+    "Median number parameters relative to hand-tuned, Super:",
+    Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean][
+        "number_parameters"
+    ].median()
+    / 41580.0,
+)
 
-print("Median number parameters, LogNEI, Super:", Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean]["number_parameters"].median())
-print("Median number parameters relative to hand-tuned, LogNEI, Super:", Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean]["number_parameters"].median() / 41580.0)
+print(
+    "Median number parameters, LogNEI, Super:",
+    Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean][
+        "number_parameters"
+    ].median(),
+)
+print(
+    "Median number parameters relative to hand-tuned, LogNEI, Super:",
+    Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean][
+        "number_parameters"
+    ].median()
+    / 41580.0,
+)
 
-print("Median checkpoint size, bytes, Super:", Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean]["checkpoint_size"].median())
-print("Median checkpoint size relative to hand-tuned, Super:", Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean]["checkpoint_size"].median() / 514995.0)
+print(
+    "Median checkpoint size, bytes, Super:",
+    Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean][
+        "checkpoint_size"
+    ].median(),
+)
+print(
+    "Median checkpoint size relative to hand-tuned, Super:",
+    Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean][
+        "checkpoint_size"
+    ].median()
+    / 514995.0,
+)
 
-print("Median checkpoint size, bytes, LogNEI, Super:", Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean]["checkpoint_size"].median())
-print("Median checkpoint size relative to hand-tuned, LogNEI, Super:", Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean]["checkpoint_size"].median() / 514995.0)
+print(
+    "Median checkpoint size, bytes, LogNEI, Super:",
+    Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean][
+        "checkpoint_size"
+    ].median(),
+)
+print(
+    "Median checkpoint size relative to hand-tuned, LogNEI, Super:",
+    Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean][
+        "checkpoint_size"
+    ].median()
+    / 514995.0,
+)
 
 # calculating cumulative regret for every replicate
 Super_random["immediate_regret"] = abs(
@@ -893,6 +1049,12 @@ fig = go.Figure(
         ),
     )
 )
+fig.update_layout(
+    title=dict(
+        text="Superconductivity Test Normalized RMSE Parallel Coordinate Plot, Hyperparameters Above Median, Colored by NRMSE"
+    )
+)
+# fig.write_html(file=(plot_directory / "parallel_coordinate_plots" / "Super_parcoords_below_median.html"))
 # fig.write_image(
 #     file=(static_plot_directory / "Super_parcoords_below_threshold.pdf"),
 #     format="pdf",
@@ -1098,8 +1260,14 @@ fig = go.Figure(
         ),
     )
 )
+fig.update_layout(
+    title=dict(
+        text="Superconductivity Test Normalized RMSE Parallel Coordinate Plot, Random Search, Colored by NRMSE"
+    )
+)
+# fig.write_html(file=(plot_directory / "parallel_coordinate_plots" / "Super_parcoords_Random.html"))
 # fig.write_image(file=(static_plot_directory / "Super_parcoords_Random.pdf"), format="pdf", width=1600, height=900)
-# fig.show()
+fig.show()
 
 # creating interactive parallel coordinate plots for lognei Super
 fig = go.Figure(
@@ -1174,8 +1342,14 @@ fig = go.Figure(
         ),
     )
 )
+fig.update_layout(
+    title=dict(
+        text="Superconductivity Test Normalized RMSE Parallel Coordinate Plot, LogNEI, Colored by NRMSE"
+    )
+)
+# fig.write_html(file=(plot_directory / "parallel_coordinate_plots" / "Super_parcoords_LogNEI.html"))
 # fig.write_image(file=(static_plot_directory / "Super_parcoords_LogNEI.pdf"), format="pdf", width=1600, height=900)
-# fig.show()
+fig.show()
 
 # creating interactive parallel coordinate plots for jes Super
 fig = go.Figure(
@@ -1248,5 +1422,11 @@ fig = go.Figure(
         ),
     )
 )
+fig.update_layout(
+    title=dict(
+        text="Superconductivity Test Normalized RMSE Parallel Coordinate Plot, JES, Colored by NRMSE"
+    )
+)
+# fig.write_html(file=(plot_directory / "parallel_coordinate_plots" / "Super_parcoords_JES.html"))
 # fig.write_image(file=(static_plot_directory / "Super_parcoords_JES.pdf"), format="pdf", width=1600, height=900)
-# fig.show()
+fig.show()
