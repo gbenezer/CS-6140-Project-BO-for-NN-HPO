@@ -35,4 +35,4 @@ The general workflow for Bayesian optimization in the context of neural network 
 
 - The generated experimental data in CSV format used for the report are all in `logs\csv_logs\experiment_logs`, and the experimental JSON files are in `logs\JSON_logs\experiments`
 
-- All the data analysis and plotting for the report is done in `study_1\analysis_and_plotting.py`
+- All the data analysis and plotting for the report is done in `study_1\analysis_and_plotting.py`, and all the plots are saved in `plots`. PDF plots are in `plots\static_plots` and interactive HTML plots are in `plots\html_plots`. The HTML plots do not render in GitHub, but if downloaded can be interacted with.
