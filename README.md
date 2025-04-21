@@ -17,9 +17,7 @@ The general workflow for Bayesian optimization in the context of neural network 
 8. Repeat steps 5 to 7
 
 ### A visual example of steps 5 to 7 (from *A Tutorial on Bayesian Optimization of Expensive Cost Functions, with Application to Active User Modeling and Hierarchical Reinforcement Learning*)
-<center>
-    <img src="Bayesian_optimization_tutorial_example.png" alt="Image from Bayesian Optimization Tutorial" width=600, height=600, class="center">
-</center>
+<img src="Bayesian_optimization_tutorial_example.png" alt="Image from Bayesian Optimization Tutorial" width=600, height=600, class="center">
 
 ## Components
 
