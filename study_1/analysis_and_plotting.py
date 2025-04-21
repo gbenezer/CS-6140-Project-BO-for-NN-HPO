@@ -303,61 +303,61 @@ MNIST_lognei = MNIST_data[MNIST_data["acquisition"] == "LogNEI"].copy()
 MNIST_jes = MNIST_data[MNIST_data["acquisition"] == "JES"].copy()
 
 
-print(
-    "Median number parameters, MNIST:",
-    MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean][
-        "number_parameters"
-    ].median(),
-)
-print(
-    "Median number parameters relative to hand-tuned, MNIST:",
-    MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean][
-        "number_parameters"
-    ].median()
-    / 447500.0,
-)
+# print(
+#     "Median number parameters, MNIST:",
+#     MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean][
+#         "number_parameters"
+#     ].median(),
+# )
+# print(
+#     "Median number parameters relative to hand-tuned, MNIST:",
+#     MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean][
+#         "number_parameters"
+#     ].median()
+#     / 447500.0,
+# )
 
-print(
-    "Median number parameters, LogNEI, MNIST:",
-    MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean][
-        "number_parameters"
-    ].median(),
-)
-print(
-    "Median number parameters relative to hand-tuned, LogNEI, MNIST:",
-    MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean][
-        "number_parameters"
-    ].median()
-    / 447500.0,
-)
+# print(
+#     "Median number parameters, LogNEI, MNIST:",
+#     MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean][
+#         "number_parameters"
+#     ].median(),
+# )
+# print(
+#     "Median number parameters relative to hand-tuned, LogNEI, MNIST:",
+#     MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean][
+#         "number_parameters"
+#     ].median()
+#     / 447500.0,
+# )
 
-print(
-    "Median checkpoint size, bytes, MNIST:",
-    MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean][
-        "checkpoint_size"
-    ].median(),
-)
-print(
-    "Median checkpoint size relative to hand-tuned, MNIST:",
-    MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean][
-        "checkpoint_size"
-    ].median()
-    / 5389811.0,
-)
+# print(
+#     "Median checkpoint size, bytes, MNIST:",
+#     MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean][
+#         "checkpoint_size"
+#     ].median(),
+# )
+# print(
+#     "Median checkpoint size relative to hand-tuned, MNIST:",
+#     MNIST_data[MNIST_data["test_accuracy"] >= MNIST_accuracy_mean][
+#         "checkpoint_size"
+#     ].median()
+#     / 5389811.0,
+# )
 
-print(
-    "Median checkpoint size, bytes, LogNEI, MNIST:",
-    MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean][
-        "checkpoint_size"
-    ].median(),
-)
-print(
-    "Median checkpoint size relative to hand-tuned, LogNEI, MNIST:",
-    MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean][
-        "checkpoint_size"
-    ].median()
-    / 5389811.0,
-)
+# print(
+#     "Median checkpoint size, bytes, LogNEI, MNIST:",
+#     MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean][
+#         "checkpoint_size"
+#     ].median(),
+# )
+# print(
+#     "Median checkpoint size relative to hand-tuned, LogNEI, MNIST:",
+#     MNIST_lognei[MNIST_lognei["test_accuracy"] >= MNIST_accuracy_mean][
+#         "checkpoint_size"
+#     ].median()
+#     / 5389811.0,
+# )
 
 # Calculating cumulative regret for each replicate
 MNIST_random["immediate_regret"] = abs(
@@ -824,61 +824,61 @@ Super_random = Super_data[Super_data["acquisition"] == "Random"].copy()
 Super_lognei = Super_data[Super_data["acquisition"] == "LogNEI"].copy()
 Super_jes = Super_data[Super_data["acquisition"] == "JES"].copy()
 
-print(
-    "Median number parameters, Super:",
-    Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean][
-        "number_parameters"
-    ].median(),
-)
-print(
-    "Median number parameters relative to hand-tuned, Super:",
-    Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean][
-        "number_parameters"
-    ].median()
-    / 41580.0,
-)
+# print(
+#     "Median number parameters, Super:",
+#     Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean][
+#         "number_parameters"
+#     ].median(),
+# )
+# print(
+#     "Median number parameters relative to hand-tuned, Super:",
+#     Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean][
+#         "number_parameters"
+#     ].median()
+#     / 41580.0,
+# )
 
-print(
-    "Median number parameters, LogNEI, Super:",
-    Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean][
-        "number_parameters"
-    ].median(),
-)
-print(
-    "Median number parameters relative to hand-tuned, LogNEI, Super:",
-    Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean][
-        "number_parameters"
-    ].median()
-    / 41580.0,
-)
+# print(
+#     "Median number parameters, LogNEI, Super:",
+#     Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean][
+#         "number_parameters"
+#     ].median(),
+# )
+# print(
+#     "Median number parameters relative to hand-tuned, LogNEI, Super:",
+#     Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean][
+#         "number_parameters"
+#     ].median()
+#     / 41580.0,
+# )
 
-print(
-    "Median checkpoint size, bytes, Super:",
-    Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean][
-        "checkpoint_size"
-    ].median(),
-)
-print(
-    "Median checkpoint size relative to hand-tuned, Super:",
-    Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean][
-        "checkpoint_size"
-    ].median()
-    / 514995.0,
-)
+# print(
+#     "Median checkpoint size, bytes, Super:",
+#     Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean][
+#         "checkpoint_size"
+#     ].median(),
+# )
+# print(
+#     "Median checkpoint size relative to hand-tuned, Super:",
+#     Super_data[Super_data["test_nrmse_range"] >= Super_nrmse_range_mean][
+#         "checkpoint_size"
+#     ].median()
+#     / 514995.0,
+# )
 
-print(
-    "Median checkpoint size, bytes, LogNEI, Super:",
-    Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean][
-        "checkpoint_size"
-    ].median(),
-)
-print(
-    "Median checkpoint size relative to hand-tuned, LogNEI, Super:",
-    Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean][
-        "checkpoint_size"
-    ].median()
-    / 514995.0,
-)
+# print(
+#     "Median checkpoint size, bytes, LogNEI, Super:",
+#     Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean][
+#         "checkpoint_size"
+#     ].median(),
+# )
+# print(
+#     "Median checkpoint size relative to hand-tuned, LogNEI, Super:",
+#     Super_lognei[Super_lognei["test_nrmse_range"] >= Super_nrmse_range_mean][
+#         "checkpoint_size"
+#     ].median()
+#     / 514995.0,
+# )
 
 # calculating cumulative regret for every replicate
 Super_random["immediate_regret"] = abs(
