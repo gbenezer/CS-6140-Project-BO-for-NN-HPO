@@ -50,31 +50,31 @@ def conduct_experiment(
     global_early_stop: bool,
     seed: int | None = None,
 ):
-    """_summary_
+    """A function for conducting an experiment to tune a set of neural network hyperparameters for a small feedforward network.
 
     Args:
-        task (Literal[&quot;regression&quot;, &quot;classification&quot;]): _description_
-        parameter_space (dict): _description_
-        objective (dict): _description_
-        param_constraints (list | None): _description_
-        out_constraints (list | None): _description_
-        tracking_metrics (list | None): _description_
-        acquisition_func_class (AcquisitionFunction): _description_
-        train_loader (torch.utils.data.DataLoader): _description_
-        valid_loader (torch.utils.data.DataLoader): _description_
-        test_loader (torch.utils.data.DataLoader): _description_
-        input_shape (tuple): _description_
-        number_input_features (int): _description_
-        number_output_features (int): _description_
-        loss (torch.nn.modules.loss._Loss): _description_
-        max_trials (int): _description_
-        num_reps_per_trial (int): _description_
-        max_epochs (int): _description_
-        experiment_name (str): _description_
-        fully_random (bool): _description_
-        interactive_plots (bool): _description_
-        global_early_stop (bool): _description_
-        seed (int | None, optional): _description_. Defaults to None.
+        task (Literal["regression", "classification"]): what task the feedforward networks should be trained for
+        parameter_space (dict): dictionary describing the hyperparameter search space (example exists in experiment_definition.py)
+        objective (dict): dictionary describing the objective(s) to optimize (example exists in experiment_definition.py)
+        param_constraints (list | None): list describing constraints in the hyperparameter space (example exists in experiment_definition.py)
+        out_constraints (list | None): list describing constraints on the output (not currently used)
+        tracking_metrics (list | None): list describing any other metrics to be tracked during the experiment, but not optimized (example exists in experiment_definition.py)
+        acquisition_func_class (AcquisitionFunction): BoTorch acquisition function to be used as a heuristic for Bayesian optimization during the experiment
+        train_loader (torch.utils.data.DataLoader): DataLoader to use for training
+        valid_loader (torch.utils.data.DataLoader): DataLoader to use for validation
+        test_loader (torch.utils.data.DataLoader): DataLoader to use for testing
+        input_shape (tuple): the shape of an input datum (needs to be at least 3 dimensional, even if several dimensions are ones)
+        number_input_features (int): number of features for the network to process at the input
+        number_output_features (int): number of classes, probabilities, or values for the network to output
+        loss (torch.nn.modules.loss._Loss): loss function
+        max_trials (int): maximum number of neural network hyperparameters to evaluate during the experiment
+        num_reps_per_trial (int): how many times to repeat evaluation of a set of neural network hyperparameters (replicates)
+        max_epochs (int): maximum number of epochs to train each neural network defined by a given set of hyperparameters for
+        experiment_name (str): the name of the experiment
+        fully_random (bool): whether to ignore the acquisition function and sample uniformly at random through the hyperparameter space instead
+        interactive_plots (bool): whether or not to generate a set of interactive plots for the experiment; not compatible with fully random
+        global_early_stop (bool): whether or not to stop the experiment fully after a hardcoded threshold performance is met; not compatible with multiobjective problems
+        seed (int | None, optional): the random seed to use for random number generation. Defaults to None.
 
     Returns:
         _type_: _description_

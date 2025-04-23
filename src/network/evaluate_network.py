@@ -5,8 +5,6 @@
 # and inference memory performance as three separate objective functions
 # Inference time and memory utilization are subject to more noise, so that may be a consideration
 
-# TODO: function type annotation
-
 from pathlib import Path
 import time
 import os
@@ -40,24 +38,24 @@ def evaluate_hyperparameters(
     max_epochs: int,
     parameterization: dict,
 ):
-    """_summary_
+    """A function that takes neural network hyperparameters and evaluates them on several metrics of performance
 
     Args:
-        task (Literal["regression", "classification"]): _description_
-        train_loader (torch.utils.data.DataLoader): _description_
-        valid_loader (torch.utils.data.DataLoader): _description_
-        test_loader (torch.utils.data.DataLoader): _description_
-        input_shape (tuple): _description_
-        number_input_features (int): _description_
-        number_output_features (int): _description_
-        loss (torch.nn.modules.loss._Loss): _description_
-        log_dir_name (str): _description_
-        num_rep (int): _description_
-        max_epochs (int): _description_
-        parameterization (dict): _description_
+        task (Literal["regression", "classification"]): what task the feedforward network should be trained for
+        train_loader (torch.utils.data.DataLoader): DataLoader to use for training
+        valid_loader (torch.utils.data.DataLoader): DataLoader to use for validation
+        test_loader (torch.utils.data.DataLoader): DataLoader to use for testing
+        input_shape (tuple): the shape of an input datum (needs to be at least 3 dimensional, even if several dimensions are ones)
+        number_input_features (int): number of features for the network to process at the input
+        number_output_features (int): number of classes, probabilities, or values for the network to output
+        loss (torch.nn.modules.loss._Loss): loss function
+        log_dir_name (str): name of the log directory
+        num_rep (int): number of times to repeat training and evaluation of the neural network hyperparameters
+        max_epochs (int): maximum number of epochs to allow the neural network to train before evaluation
+        parameterization (dict): a dictionary of neural network hyperparameter names and values (see experiment_definition.py for examples)
 
     Returns:
-        _type_: _description_
+        a Dictionary containing metrics describing the performance of the neural network hyperparameters
     """
     # define some lists to keep track of outputs
     training_times = []
