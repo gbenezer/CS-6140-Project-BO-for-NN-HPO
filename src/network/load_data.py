@@ -1,13 +1,13 @@
 # file to define how the data are imported as DataSets and DataLoaders
-from pathlib import Path
 import torchvision.transforms.v2 as transforms
-from sklearn.preprocessing import normalize, scale
-import torch.utils.data as data
 import torch
+import torch.utils.data as data
 import pandas as pd
 import numpy as np
+from pathlib import Path
 from torchvision import datasets
 from ucimlrepo import fetch_ucirepo
+from sklearn.preprocessing import normalize, scale
 
 
 def get_MNIST_data(
@@ -17,17 +17,17 @@ def get_MNIST_data(
     batch_n: int,
     download_data: bool,
 ):
-    """_summary_
+    """A convenience function to load MNIST data
 
     Args:
-        valid_fraction (float): _description_
-        random_seed (int): _description_
-        n_workers (int): _description_
-        batch_n (int): _description_
-        download_data (bool): _description_
+        valid_fraction (float): fraction of data to be extracted from the training data as validation data
+        random_seed (int): the number for seeding the random number generator
+        n_workers (int): how many subprocesses the output dataloaders should use for loading data
+        batch_n (int): batch size for the output dataloaders
+        download_data (bool): whether or not the data need to be downloaded to a local directory
 
     Returns:
-        _type_: _description_
+        Dataset and DataLoader objects corresponding to training, validation, and testing sets of MNIST images
     """
     # define the image transformation
     image_transform = transforms.Compose(
@@ -90,11 +90,8 @@ def get_MNIST_data(
 
 # define Dataset class for Superconductivity data
 class SuperconductivityDataset(data.Dataset):
-    """_summary_
+    """Dataset subclass for the Superconductivity data that fetches the data from the UCI ML data repository"""
 
-    Args:
-        data (_type_): _description_
-    """
     def __init__(
         self,
         transform=transforms.Compose(
@@ -142,13 +139,17 @@ class SuperconductivityDataset(data.Dataset):
 
 
 class LocalSuperconductivityDataset(data.Dataset):
-    """_summary_
+    """Dataset subclass for the Superconductivity data that uses local directory data
 
     Args:
-        data (_type_): _description_
+        data_directory (pathlib.Path): the path to the local data directory
     """
+
     def __init__(
         self,
+        data_directory: Path = Path(
+            "C:\\Users\\Gil\\Documents\\Repositories\\Python\\CS_6140\\Project\\external_data\\superconductivty_data\\"
+        ),
         transform=transforms.Compose(
             [transforms.ToImage(), transforms.ToDtype(torch.float)]
         ),
@@ -159,12 +160,8 @@ class LocalSuperconductivityDataset(data.Dataset):
         standardize_features=True,
     ):
         super().__init__()
-        self.data_object = pd.read_csv(
-            "C:\\Users\\Gil\\Documents\\Repositories\\Python\\CS_6140\\Project\\external_data\\superconductivty_data\\train.csv"
-        )
-        self.unique_molecules = pd.read_csv(
-            "C:\\Users\\Gil\\Documents\\Repositories\\Python\\CS_6140\\Project\\external_data\\superconductivty_data\\unique_m.csv"
-        )
+        self.data_object = pd.read_csv((data_directory / "train.csv"))
+        self.unique_molecules = pd.read_csv((data_directory / "unique_m.csv"))
         self.features = self.data_object.iloc[:, 0:81]
         self.targets = self.data_object.iloc[:, 81]
         self.feature_ndarray = self.features.to_numpy()
@@ -208,15 +205,15 @@ def get_Superconductivity_data(
     """_summary_
 
     Args:
-        valid_fraction (float): _description_
-        test_fraction (float): _description_
-        random_seed (int): _description_
-        n_workers (int): _description_
-        batch_n (int): _description_
-        local (bool, optional): _description_. Defaults to False.
+        valid_fraction (float): fraction of training data left over to use as validation data
+        test_fraction (float): fraction of total data to use as test data
+        random_seed (int): the number for seeding the random number generator
+        n_workers (int): how many subprocesses the output dataloaders should use for loading data
+        batch_n (int): batch size for the output dataloaders
+        local (bool, optional): whether to use the local data class or the data class that fetches the raw data from UCI ML Repo. Defaults to False.
 
     Returns:
-        _type_: _description_
+        Dataset and DataLoader objects corresponding to training, validation, and testing sets of physicochemical features of superconductors along with associated critical temperatures
     """
     # instantiating the full dataset
     if local:
